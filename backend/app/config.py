@@ -12,6 +12,10 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 class Settings(BaseSettings):
     app_name: str = "Multilingual Laptop Review Intelligence System"
     app_version: str = "1.0.0"
+    database_url: str = Field(
+        default="sqlite:///./reviews.db",
+        alias="DATABASE_URL",
+    )
     raw_dataset_path: Path = Field(
         default=ROOT_DIR / "data" / "raw" / "final_dataset.csv",
         alias="RAW_DATASET_PATH",
@@ -34,7 +38,7 @@ class Settings(BaseSettings):
     default_top_k: int = Field(default=5, alias="DEFAULT_TOP_K")
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=ROOT_DIR / ".env",
         env_file_encoding="utf-8",
         populate_by_name=True,
         extra="ignore",

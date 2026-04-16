@@ -17,29 +17,61 @@ This project turns the attached laptop review dataset into a deployable analytic
 
 ## Local Setup
 
-1. Install dependencies:
+1. Open PowerShell in the project folder:
 
-```bash
-pip install -r requirements.txt
+```powershell
+cd "C:\Users\kamat\OneDrive\Documents\New project"
 ```
 
-2. Build the model, retrieval index, and export files:
+2. Create `.env` safely for Windows:
 
-```bash
+```powershell
+.\scripts\setup_local.ps1
+```
+
+This creates `.env` from [`.env.example`](C:/Users/kamat/OneDrive/Documents/New%20project/.env.example) and keeps SQLite as the default local database.
+
+3. Install dependencies:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+4. Build the model, retrieval index, and export files:
+
+```powershell
 python scripts/build_artifacts.py --force
 ```
 
-3. Start the FastAPI backend:
+5. Start the FastAPI backend:
 
-```bash
+```powershell
 uvicorn backend.app.main:app --reload
 ```
 
-4. Start the Streamlit frontend in a second terminal:
+6. Start the Streamlit frontend in a second PowerShell window:
 
-```bash
+```powershell
 streamlit run frontend/streamlit_app.py
 ```
+
+### PowerShell Environment Variable Note
+
+Do not run this in PowerShell:
+
+```powershell
+DATABASE_URL=sqlite:///./reviews.db
+```
+
+That is Bash syntax and causes the error you saw.
+
+If you want to set it only for the current PowerShell session, use:
+
+```powershell
+$env:DATABASE_URL = "sqlite:///./reviews.db"
+```
+
+You usually do not need to do that for this project, because the app already defaults to SQLite and reads values from `.env`.
 
 ## Deployment Notes
 
