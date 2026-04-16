@@ -7,6 +7,8 @@ This project turns the attached laptop review dataset into a deployable analytic
 - Preprocesses Tanglish + English laptop reviews
 - Extracts laptop-focused aspects such as battery, performance, display, price, design, keyboard, and delivery
 - Trains a deployable sentiment model from the attached dataset
+- Stores text, voice, and video reviews in a dynamic SQL database
+- Supports SQLite for local development and PostgreSQL for production
 - Builds semantic retrieval embeddings with Sentence Transformers
 - Builds Sentence Transformer embeddings offline and uses a lightweight TF-IDF retrieval runtime so free-tier deployments start reliably
 - Exposes a FastAPI backend for dashboards, semantic search, review analysis, and insight generation
@@ -37,7 +39,7 @@ This creates `.env` from [`.env.example`](C:/Users/kamat/OneDrive/Documents/New%
 python -m pip install -r requirements.txt
 ```
 
-4. Build the model, retrieval index, and export files:
+4. Build the model, retrieval index, and export files from the database:
 
 ```powershell
 python scripts/build_artifacts.py --force
@@ -72,6 +74,37 @@ $env:DATABASE_URL = "sqlite:///./reviews.db"
 ```
 
 You usually do not need to do that for this project, because the app already defaults to SQLite and reads values from `.env`.
+
+### Database Notes
+
+- Local default:
+  `DATABASE_URL=sqlite:///./reviews.db`
+- PostgreSQL production example:
+  `DATABASE_URL=postgresql://user:password@host:5432/dbname`
+- The backend automatically creates the `reviews` table on startup.
+- The first artifact build seeds the database from `data/raw/final_dataset.csv` if the database is empty.
+
+## API Endpoints
+
+- `GET /health`
+- `GET /api/v1/overview`
+- `GET /api/v1/filters`
+- `GET /api/v1/brand-comparison`
+- `GET /api/v1/aspect-summary`
+- `GET /api/v1/reviews`
+- `POST /api/v1/analyze-review`
+- `POST /api/v1/voice-review`
+- `POST /api/v1/video-review`
+- `GET /api/v1/live-reviews`
+- `GET /api/v1/analytics/summary`
+- `POST /api/v1/insights`
+- `GET /api/v1/powerbi/exports`
+
+## Tests
+
+```powershell
+python -m pytest tests -q
+```
 
 ## Deployment Notes
 

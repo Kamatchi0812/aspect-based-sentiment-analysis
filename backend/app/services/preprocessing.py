@@ -285,6 +285,7 @@ ASPECT_PATTERNS = {
     ]
     for aspect, keywords in ASPECT_KEYWORDS.items()
 }
+TANGLISH_TOKENS = set(TANGLISH_MAP) | REMOVE_WORDS
 
 
 def clean_text(text: str) -> str:
@@ -355,6 +356,15 @@ def extract_brand(product_name: str | None) -> str:
     return "Other"
 
 
+def detect_language(text: str | None) -> str:
+    normalized = clean_text(str(text or ""))
+    if not normalized:
+        return "unknown"
+    tokens = normalized.split()
+    tanglish_hits = sum(1 for token in tokens if token in TANGLISH_TOKENS)
+    return "tanglish" if tanglish_hits >= 1 else "english"
+
+
 def rating_to_sentiment(rating: int | float | str) -> str:
     try:
         score = int(float(rating))
@@ -398,10 +408,23 @@ def join_aspects(aspects: list[str]) -> str:
     return "|".join(aspects)
 
 
+def normalize_aspect_string(value: list[str] | str | None) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, list):
+        return join_aspects([item for item in value if item]) or None
+    aspects = split_aspects(value)
+    return join_aspects(aspects) or None
+
+
 def split_aspects(value: str | None) -> list[str]:
-    if not value:
+    if value is None:
         return []
-    return [item for item in str(value).split("|") if item]
+    string_value = str(value).strip()
+    if not string_value or string_value.lower() == "nan":
+        return []
+    delimiter = "|" if "|" in string_value else ","
+    return [item.strip() for item in string_value.split(delimiter) if item.strip()]
 
 
 def build_rag_text(*, brand: str, product_name: str, review: str, sentiment: str, aspects: list[str], rating: int) -> str:

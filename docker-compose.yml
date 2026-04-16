@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:///./reviews.db}
       RAW_DATASET_PATH: /app/data/raw/final_dataset.csv
       ARTIFACT_DIR: /app/artifacts
       POWERBI_EXPORT_DIR: /app/powerbi

@@ -9,3 +9,5 @@ __pycache__/
 hf_cache/
 artifacts/
 powerbi/
+*.db
+*.sqlite3
