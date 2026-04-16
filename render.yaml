@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: laptop-review-intelligence-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python scripts/build_artifacts.py --skip-if-exists
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.13
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash
+      - key: ENABLE_FAKE_MODE
+        value: false
+      - key: RAW_DATASET_PATH
+        value: ./data/raw/final_dataset.csv
+      - key: ARTIFACT_DIR
+        value: ./artifacts
+      - key: POWERBI_EXPORT_DIR
+        value: ./powerbi
+      - key: EMBEDDING_MODEL_NAME
+        value: sentence-transformers/all-MiniLM-L6-v2

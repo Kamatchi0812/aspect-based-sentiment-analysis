@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      RAW_DATASET_PATH: /app/data/raw/final_dataset.csv
+      ARTIFACT_DIR: /app/artifacts
+      POWERBI_EXPORT_DIR: /app/powerbi
+      ENABLE_FAKE_MODE: "false"
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      API_BASE_URL: http://backend:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
